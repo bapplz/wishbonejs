@@ -1,4 +1,4 @@
 class @InstanceBuilder
-  build: (className, dependencies...) ->
+  build: (className) ->
     handlerName = className
-    return new window[handlerName](dependencies)
+    return new window[handlerName]()

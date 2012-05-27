@@ -4,19 +4,21 @@
 
   describe("EventDispatcher", function() {
     beforeEach(function() {
+      var instanceBuilder;
       this.eventReceiver = new EventReceiver();
       this.routes = new Routes();
-      this.instanceBuilder = new InstanceBuilder();
-      this.eventDispatcher = new EventDispatcher(this.eventReceiver, this.routes, this.instanceBuilder);
+      instanceBuilder = new InstanceBuilder();
+      this.presenterManager = new PresenterManager(instanceBuilder);
+      this.eventDispatcher = new EventDispatcher(this.eventReceiver, this.routes, this.presenterManager);
       this.eventDispatcher.start();
       this.startEvent = new Object();
       return this.startEvent.type = "start";
     });
     it("should use StartPresenter as handler for start", function() {
-      spyOn(this.instanceBuilder, "build").andCallThrough();
+      spyOn(this.presenterManager, "create").andCallThrough();
       this.routes.add("start", StartPresenter);
       this.eventReceiver.receive(this.startEvent);
-      return expect(this.instanceBuilder.build).toHaveBeenCalledWith("StartPresenter", "StartView");
+      return expect(this.presenterManager.create).toHaveBeenCalledWith("StartPresenter");
     });
     it("should receive eventHandled when presenter job is finished", function() {
       spyOn(this.eventDispatcher, "onEventHandled").andCallThrough();
@@ -69,20 +71,28 @@
 
   })(BasePresenter);
 
-  this.StartView = (function() {
+  this.StartView = (function(_super) {
 
-    function StartView() {}
+    __extends(StartView, _super);
+
+    function StartView() {
+      return StartView.__super__.constructor.apply(this, arguments);
+    }
 
     return StartView;
 
-  })();
+  })(BaseView);
 
-  this.QuestionView = (function() {
+  this.QuestionView = (function(_super) {
 
-    function QuestionView() {}
+    __extends(QuestionView, _super);
+
+    function QuestionView() {
+      return QuestionView.__super__.constructor.apply(this, arguments);
+    }
 
     return QuestionView;
 
-  })();
+  })(BaseView);
 
 }).call(this);

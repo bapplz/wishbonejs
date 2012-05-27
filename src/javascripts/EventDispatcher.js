@@ -2,10 +2,10 @@
 
   this.EventDispatcher = (function() {
 
-    function EventDispatcher(eventReceiver, routes, instanceBuilder) {
+    function EventDispatcher(eventReceiver, routes, presenterManager) {
       this.eventReceiver = eventReceiver;
       this.routes = routes;
-      this.instanceBuilder = instanceBuilder;
+      this.presenterManager = presenterManager;
       this.readyToDispatch = true;
     }
 
@@ -20,16 +20,14 @@
     };
 
     EventDispatcher.prototype.fireNextEvent = function() {
-      var componentName, nextEvent, presenter, presenterName, viewName;
+      var nextEvent, presenter, presenterName;
       nextEvent = this.eventReceiver.poll();
       if (nextEvent === null) {
         return;
       }
       this.readyToDispatch = false;
       presenterName = this.routes.getHandler(nextEvent.type).name;
-      componentName = NameExtractor.extract(presenterName);
-      viewName = componentName + "View";
-      presenter = this.instanceBuilder.build(presenterName, viewName);
+      presenter = this.presenterManager.create(presenterName);
       presenter.on("eventHandled", this.onEventHandled.bind(this));
       return presenter.present();
     };

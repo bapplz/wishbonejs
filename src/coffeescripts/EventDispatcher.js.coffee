@@ -1,8 +1,8 @@
 class @EventDispatcher
-  constructor: (eventReceiver, routes, instanceBuilder) ->
+  constructor: (eventReceiver, routes, presenterManager) ->
     @eventReceiver = eventReceiver
     @routes = routes
-    @instanceBuilder = instanceBuilder
+    @presenterManager = presenterManager
     @readyToDispatch = true
 
   start: ->
@@ -18,9 +18,7 @@ class @EventDispatcher
       return
     @readyToDispatch = false
     presenterName = @routes.getHandler(nextEvent.type).name
-    componentName = NameExtractor.extract(presenterName)
-    viewName = componentName + "View"
-    presenter = @instanceBuilder.build(presenterName, viewName)
+    presenter = @presenterManager.create(presenterName)
     presenter.on "eventHandled", @onEventHandled.bind this
     presenter.present()
 

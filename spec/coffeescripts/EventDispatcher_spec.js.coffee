@@ -2,18 +2,19 @@ describe "EventDispatcher", ->
   beforeEach ->
     @eventReceiver = new EventReceiver()
     @routes = new Routes()
-    @instanceBuilder = new InstanceBuilder()
-    @eventDispatcher = new EventDispatcher(@eventReceiver, @routes, @instanceBuilder)
+    instanceBuilder = new InstanceBuilder()
+    @presenterManager = new PresenterManager(instanceBuilder)
+    @eventDispatcher = new EventDispatcher(@eventReceiver, @routes, @presenterManager)
     @eventDispatcher.start()
 
     @startEvent = new Object()
     @startEvent.type = "start"
 
   it "should use StartPresenter as handler for start", ->
-    spyOn(@instanceBuilder, "build").andCallThrough()
+    spyOn(@presenterManager, "create").andCallThrough()
     @routes.add("start", StartPresenter)
     @eventReceiver.receive(@startEvent)
-    expect(@instanceBuilder.build).toHaveBeenCalledWith("StartPresenter", "StartView")
+    expect(@presenterManager.create).toHaveBeenCalledWith("StartPresenter")
 
   it "should receive eventHandled when presenter job is finished", ->
     spyOn(@eventDispatcher, "onEventHandled").andCallThrough()
@@ -42,6 +43,6 @@ class @QuestionPresenter extends BasePresenter
     @done()
 
 
-class @StartView
+class @StartView extends BaseView
 
-class @QuestionView
+class @QuestionView extends BaseView
