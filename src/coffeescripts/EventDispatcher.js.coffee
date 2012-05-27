@@ -3,13 +3,28 @@ class @EventDispatcher
     @eventReceiver = eventReceiver
     @routes = routes
     @instanceBuilder = instanceBuilder
+    @readyToDispatch = true
 
   start: ->
-    @eventReceiver.on "afterEventReceived", @dispatchEvent.bind this
+    @eventReceiver.on "afterEventReceived", @onDispatchEvent.bind this
 
-  dispatchEvent: (event) ->
-    presenterName = @routes.getHandler(event.type).name
+  onDispatchEvent: (event) ->
+    if @readyToDispatch == true
+      @fireNextEvent()
+
+  fireNextEvent: ->
+    nextEvent = @eventReceiver.poll()
+    if nextEvent is null
+      return
+    @readyToDispatch = false
+    presenterName = @routes.getHandler(nextEvent.type).name
     componentName = NameExtractor.extract(presenterName)
     viewName = componentName + "View"
     presenter = @instanceBuilder.build(presenterName, viewName)
+    presenter.on "eventHandled", @onEventHandled.bind this
     presenter.present()
+
+
+  onEventHandled: (eventType) ->
+    @readyToDispatch = true
+    @fireNextEvent()

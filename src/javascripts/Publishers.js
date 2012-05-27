@@ -6,15 +6,13 @@
 
     function Publisher() {
       this.callbacks = [];
-      this.addCallbackSlots();
+      this.createCallbackSlots();
     }
 
-    Publisher.prototype.addCallbackSlots = function() {
-      return console.log("logger");
-    };
+    Publisher.prototype.createCallbackSlots = function() {};
 
     Publisher.prototype.on = function(eventType, callback) {
-      this.initCallbacksKey(eventType);
+      this.addCallbackSlots(eventType);
       return this.callbacks[eventType].push(callback);
     };
 
@@ -29,10 +27,8 @@
       return _results;
     };
 
-    Publisher.prototype.initCallbacksKey = function(evenType) {
-      if (this.callbacks[evenType] === void 0) {
-        return this.callbacks[evenType] = [];
-      }
+    Publisher.prototype.addCallbackSlots = function(evenType) {
+      return this.callbacks[evenType] = [];
     };
 
     return Publisher;
@@ -48,10 +44,10 @@
       EventReceiver.__super__.constructor.apply(this, arguments);
     }
 
-    EventReceiver.prototype.addCallbackSlots = function() {
-      this.initCallbacksKey("beforeEventReceived");
-      this.initCallbacksKey("afterEventReceived");
-      return this.initCallbacksKey("beforeEventRemoved");
+    EventReceiver.prototype.createCallbackSlots = function() {
+      this.addCallbackSlots("beforeEventReceived");
+      this.addCallbackSlots("afterEventReceived");
+      return this.addCallbackSlots("beforeEventRemoved");
     };
 
     EventReceiver.prototype.receive = function(event) {
@@ -59,7 +55,6 @@
       data = new Object();
       data.type = event.type;
       this.trigger("beforeEventReceived", data);
-      this.initCallbacksKey(event.type);
       this.events.push(event);
       return this.trigger("afterEventReceived", data);
     };
@@ -79,6 +74,29 @@
     };
 
     return EventReceiver;
+
+  })(Publisher);
+
+  this.BasePresenter = (function(_super) {
+
+    __extends(BasePresenter, _super);
+
+    function BasePresenter() {
+      return BasePresenter.__super__.constructor.apply(this, arguments);
+    }
+
+    BasePresenter.prototype.createCallbackSlots = function() {
+      return this.addCallbackSlots("eventHandled");
+    };
+
+    BasePresenter.prototype.done = function() {
+      var data;
+      data = new Object();
+      data.type = "eventHandled";
+      return this.trigger("eventHandled", data);
+    };
+
+    return BasePresenter;
 
   })(Publisher);
 
