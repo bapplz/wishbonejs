@@ -1,10 +1,10 @@
 ## Synopsis
 
-Client framework for building real time apps like games, chats, etc.
+Client side framework for building real time apps like games, chats, etc.
 
 ## Installation
 
-Download public/javascripts/*.js
+Download wishbone.js from the *build* dir
 
 ## Contributing
 

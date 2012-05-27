@@ -4,9 +4,9 @@ describe "EventReceiver", ->
     @startEvent = new Object()
     @startEvent.type = "start"
 
-  it "should receive start event", ->
+  it "should call receive event", ->
     callback = jasmine.createSpy "eventReceivedCallback"
-    @eventReceiver.on "start", callback
+    @eventReceiver.on "beforeEventReceived", callback
     @eventReceiver.receive(@startEvent)
     expect(callback).toHaveBeenCalled()
 
@@ -19,3 +19,10 @@ describe "EventReceiver", ->
     @eventReceiver.receive(@startEvent)
     receivedEvent = @eventReceiver.poll()
     expect(@eventReceiver.poll()).toBeNull()
+
+  it "should receive before event is removed from the queue", ->
+    callback = jasmine.createSpy "eventReceivedCallback"
+    @eventReceiver.on "beforeEventRemoved", callback
+    @eventReceiver.receive(@startEvent)
+    receivedEvent = @eventReceiver.poll()
+    expect(callback).toHaveBeenCalled()

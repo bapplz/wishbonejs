@@ -5,6 +5,9 @@
     function EventReceiver() {
       this.callbacks = [];
       this.events = [];
+      this.initCallbacksKey("beforeEventReceived");
+      this.initCallbacksKey("afterEventReceived");
+      this.initCallbacksKey("beforeEventRemoved");
     }
 
     EventReceiver.prototype.on = function(eventType, callback) {
@@ -24,9 +27,13 @@
     };
 
     EventReceiver.prototype.receive = function(event) {
+      var data;
+      data = new Object();
+      data.type = event.type;
+      this.trigger("beforeEventReceived", data);
       this.initCallbacksKey(event.type);
       this.events.push(event);
-      return this.trigger(event.type, event.data);
+      return this.trigger("afterEventReceived", data);
     };
 
     EventReceiver.prototype.initCallbacksKey = function(evenType) {
@@ -36,12 +43,16 @@
     };
 
     EventReceiver.prototype.poll = function() {
-      var event;
+      var data, event;
       event = this.events[0];
-      this.events.splice(0, 1);
       if (event === void 0) {
         event = null;
+      } else {
+        data = new Object();
+        data.type = event.type;
+        this.trigger("beforeEventRemoved", data);
       }
+      this.events.splice(0, 1);
       return event;
     };
 

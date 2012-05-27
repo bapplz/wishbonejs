@@ -6,10 +6,10 @@
       this.startEvent = new Object();
       return this.startEvent.type = "start";
     });
-    it("should receive start event", function() {
+    it("should call receive event", function() {
       var callback;
       callback = jasmine.createSpy("eventReceivedCallback");
-      this.eventReceiver.on("start", callback);
+      this.eventReceiver.on("beforeEventReceived", callback);
       this.eventReceiver.receive(this.startEvent);
       return expect(callback).toHaveBeenCalled();
     });
@@ -19,11 +19,19 @@
       receivedEvent = this.eventReceiver.poll();
       return expect(receivedEvent.type).toBe("start");
     });
-    return it("should remove event after it was polled for it", function() {
+    it("should remove event after it was polled for it", function() {
       var receivedEvent;
       this.eventReceiver.receive(this.startEvent);
       receivedEvent = this.eventReceiver.poll();
       return expect(this.eventReceiver.poll()).toBeNull();
+    });
+    return it("should receive before event is removed from the queue", function() {
+      var callback, receivedEvent;
+      callback = jasmine.createSpy("eventReceivedCallback");
+      this.eventReceiver.on("beforeEventRemoved", callback);
+      this.eventReceiver.receive(this.startEvent);
+      receivedEvent = this.eventReceiver.poll();
+      return expect(callback).toHaveBeenCalled();
     });
   });
 
