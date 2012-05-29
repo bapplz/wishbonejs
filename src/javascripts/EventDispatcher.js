@@ -20,16 +20,23 @@
     };
 
     EventDispatcher.prototype.fireNextEvent = function() {
-      var nextEvent, presenter, presenterName;
-      nextEvent = this.eventReceiver.poll();
-      if (nextEvent === null) {
+      var event, handler, presenter, presenterName, view;
+      event = this.eventReceiver.poll();
+      if (event === null) {
         return;
       }
+      handler = this.routes.getHandler(event.type);
+      if (handler === null) {
+        this.fireNextEvent();
+        return;
+      }
+      presenterName = handler.name;
       this.readyToDispatch = false;
-      presenterName = this.routes.getHandler(nextEvent.type).name;
       presenter = this.presenterManager.create(presenterName);
       presenter.on("eventHandled", this.onEventHandled.bind(this));
-      return presenter.present();
+      presenter.presentWith(event);
+      view = this.presenterManager.createView(presenter);
+      return view.show();
     };
 
     EventDispatcher.prototype.onEventHandled = function(eventType) {

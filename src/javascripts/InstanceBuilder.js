@@ -5,9 +5,7 @@
     function InstanceBuilder() {}
 
     InstanceBuilder.prototype.build = function(className) {
-      var handlerName;
-      handlerName = className;
-      return new window[handlerName]();
+      return new window[className]();
     };
 
     return InstanceBuilder;

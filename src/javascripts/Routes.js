@@ -11,6 +11,9 @@
     };
 
     Routes.prototype.getHandler = function(route) {
+      if (this.routes[route] === void 0) {
+        return null;
+      }
       return this.routes[route];
     };
 

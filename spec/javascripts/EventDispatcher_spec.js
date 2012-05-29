@@ -26,7 +26,7 @@
       this.eventReceiver.receive(this.startEvent);
       return expect(this.eventDispatcher.onEventHandled).toHaveBeenCalled();
     });
-    return it("should call next presenter when event is handled", function() {
+    it("should call next presenter when event is handled", function() {
       var questionEvent;
       spyOn(this.eventDispatcher, "onEventHandled").andCallThrough();
       this.routes.add("start", StartPresenter);
@@ -37,6 +37,16 @@
       this.eventReceiver.receive(questionEvent);
       return expect(this.eventDispatcher.onEventHandled.calls.length).toEqual(2);
     });
+    return it("should call next presenter if no handler is defined for the current event", function() {
+      var questionEvent;
+      spyOn(this.eventDispatcher, "onEventHandled").andCallThrough();
+      this.routes.add("question", QuestionPresenter);
+      this.eventReceiver.receive(this.startEvent);
+      questionEvent = new Object();
+      questionEvent.type = "question";
+      this.eventReceiver.receive(questionEvent);
+      return expect(this.eventDispatcher.onEventHandled.calls.length).toEqual(1);
+    });
   });
 
   this.StartPresenter = (function(_super) {
@@ -46,10 +56,6 @@
     function StartPresenter() {
       return StartPresenter.__super__.constructor.apply(this, arguments);
     }
-
-    StartPresenter.prototype.present = function() {
-      return this.done();
-    };
 
     return StartPresenter;
 
@@ -63,10 +69,6 @@
       return QuestionPresenter.__super__.constructor.apply(this, arguments);
     }
 
-    QuestionPresenter.prototype.present = function() {
-      return this.done();
-    };
-
     return QuestionPresenter;
 
   })(BasePresenter);
@@ -79,6 +81,10 @@
       return StartView.__super__.constructor.apply(this, arguments);
     }
 
+    StartView.prototype.show = function() {
+      return this.presenter.done();
+    };
+
     return StartView;
 
   })(BaseView);
@@ -90,6 +96,10 @@
     function QuestionView() {
       return QuestionView.__super__.constructor.apply(this, arguments);
     }
+
+    QuestionView.prototype.show = function() {
+      return this.presenter.done();
+    };
 
     return QuestionView;
 

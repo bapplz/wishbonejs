@@ -1,8 +1,5 @@
 class @EventDispatcher
-  constructor: (eventReceiver, routes, presenterManager) ->
-    @eventReceiver = eventReceiver
-    @routes = routes
-    @presenterManager = presenterManager
+  constructor: (@eventReceiver, @routes, @presenterManager) ->
     @readyToDispatch = true
 
   start: ->
@@ -13,14 +10,20 @@ class @EventDispatcher
       @fireNextEvent()
 
   fireNextEvent: ->
-    nextEvent = @eventReceiver.poll()
-    if nextEvent is null
+    event = @eventReceiver.poll()
+    if event is null
       return
+    handler = @routes.getHandler(event.type)
+    if handler is null
+      @fireNextEvent()
+      return
+    presenterName = handler.name
     @readyToDispatch = false
-    presenterName = @routes.getHandler(nextEvent.type).name
     presenter = @presenterManager.create(presenterName)
     presenter.on "eventHandled", @onEventHandled.bind this
-    presenter.present()
+    presenter.presentWith(event)
+    view = @presenterManager.createView(presenter)
+    view.show()
 
 
   onEventHandled: (eventType) ->

@@ -1,9 +1,8 @@
 (function() {
-  var Publisher,
-    __hasProp = {}.hasOwnProperty,
+  var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  Publisher = (function() {
+  this.Publisher = (function() {
 
     function Publisher() {
       this.callbacks = [];
@@ -83,16 +82,11 @@
     __extends(BasePresenter, _super);
 
     function BasePresenter() {
-      return BasePresenter.__super__.constructor.apply(this, arguments);
+      BasePresenter.__super__.constructor.apply(this, arguments);
+      this.addCallbackSlots("eventHandled");
     }
 
-    BasePresenter.prototype.setView = function(view) {
-      return this.view = view;
-    };
-
-    BasePresenter.prototype.createCallbackSlots = function() {
-      return this.addCallbackSlots("eventHandled");
-    };
+    BasePresenter.prototype.presentWith = function(data) {};
 
     BasePresenter.prototype.done = function() {
       var data;

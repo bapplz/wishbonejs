@@ -7,13 +7,16 @@
     }
 
     PresenterManager.prototype.create = function(presenterName) {
-      var componentName, presenter, view, viewName;
-      componentName = NameExtractor.extract(presenterName);
+      return this.instanceBuilder.build(presenterName);
+    };
+
+    PresenterManager.prototype.createView = function(presenter) {
+      var componentName, view, viewName;
+      componentName = NameExtractor.extract(presenter.constructor.name);
       viewName = componentName + "View";
-      presenter = this.instanceBuilder.build(presenterName);
       view = this.instanceBuilder.build(viewName);
-      presenter.setView(view);
-      return view.setPresenter(presenter);
+      view.setPresenter(presenter);
+      return view;
     };
 
     return PresenterManager;

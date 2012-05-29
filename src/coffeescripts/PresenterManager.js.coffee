@@ -1,11 +1,12 @@
 class @PresenterManager
-  constructor: (instanceBuilder) ->
-    @instanceBuilder = instanceBuilder
+  constructor: (@instanceBuilder) ->
 
   create: (presenterName) ->
-    componentName = NameExtractor.extract(presenterName)
+    @instanceBuilder.build(presenterName)
+
+  createView: (presenter) ->
+    componentName = NameExtractor.extract(presenter.constructor.name)
     viewName = componentName + "View"
-    presenter = @instanceBuilder.build(presenterName)
     view = @instanceBuilder.build(viewName)
-    presenter.setView(view)
     view.setPresenter(presenter)
+    view

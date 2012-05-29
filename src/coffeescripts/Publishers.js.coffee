@@ -1,4 +1,4 @@
-class Publisher
+class @Publisher
 
   constructor: ->
     @callbacks = []
@@ -48,11 +48,11 @@ class @EventReceiver extends Publisher
 
 class @BasePresenter extends Publisher
 
-  setView: (view) ->
-    @view = view
-
-  createCallbackSlots: ->
+  constructor: ->
+    super
     @addCallbackSlots("eventHandled")
+
+  presentWith: (data) ->
 
   done: ->
     data = new Object()

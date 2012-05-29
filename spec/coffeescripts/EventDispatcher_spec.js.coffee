@@ -32,17 +32,24 @@ describe "EventDispatcher", ->
     @eventReceiver.receive(questionEvent)
     expect(@eventDispatcher.onEventHandled.calls.length).toEqual(2)
 
-class @StartPresenter extends BasePresenter
+  it "should call next presenter if no handler is defined for the current event", ->
+    spyOn(@eventDispatcher, "onEventHandled").andCallThrough()
+    @routes.add("question", QuestionPresenter)
+    @eventReceiver.receive(@startEvent)
+    questionEvent = new Object()
+    questionEvent.type = "question"
+    @eventReceiver.receive(questionEvent)
+    expect(@eventDispatcher.onEventHandled.calls.length).toEqual(1)
 
-  present: ->
-    @done()
+class @StartPresenter extends BasePresenter
 
 class @QuestionPresenter extends BasePresenter
 
-  present: ->
-    @done()
-
 
 class @StartView extends BaseView
+  show: ->
+    @presenter.done()
 
 class @QuestionView extends BaseView
+  show: ->
+    @presenter.done()

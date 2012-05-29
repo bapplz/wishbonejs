@@ -1,4 +1,3 @@
 class @InstanceBuilder
   build: (className) ->
-    handlerName = className
-    return new window[handlerName]()
+    return new window[className]()

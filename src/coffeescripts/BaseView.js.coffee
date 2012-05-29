@@ -1,4 +1,8 @@
 class @BaseView
 
-  setPresenter: (presenter) ->
-    @presenter = presenter
+  setPresenter: (@presenter) ->
+    @bindPresenterEvents()
+
+  bindPresenterEvents: ->
+
+  show: ->

@@ -3,5 +3,8 @@ class @NameExtractor
   @extract: (from) ->
     if(from == "")
       return from
-    firstCapitalCharPos = from.search(/\S[A-Z]\S/) + 1
-    return from.slice(0, firstCapitalCharPos)
+    matches = from.match(/.*([A-Z])/g)
+    if matches.length == 0
+      return ""
+    match = matches[0]
+    return match.substring(0, match.length - 1)

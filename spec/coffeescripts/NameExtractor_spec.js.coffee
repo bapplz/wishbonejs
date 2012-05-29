@@ -8,3 +8,7 @@ describe "NameExtractor", ->
   it "should return empty string when the string for extraction is empty", ->
     name = NameExtractor.extract("")
     expect(name).toBe("")
+
+  it "should return NewQuestion as component name", ->
+    name = NameExtractor.extract("NewQuestionPresenter")
+    expect(name).toBe("NewQuestion")
