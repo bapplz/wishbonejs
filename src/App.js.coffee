@@ -36,7 +36,6 @@ module "Wishbone", (exports) ->
     registerEvents: ->
 
     on: (eventType, callback) ->
-      @registerEvent(eventType)
       @callbacks[eventType].push callback
 
     fire: (eventType, data) ->

@@ -57,7 +57,6 @@
       Publisher.prototype.registerEvents = function() {};
 
       Publisher.prototype.on = function(eventType, callback) {
-        this.registerEvent(eventType);
         return this.callbacks[eventType].push(callback);
       };
 
