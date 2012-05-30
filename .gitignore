@@ -26,3 +26,4 @@ tmp
 
 build/spec
 build/src
+build/src/wishbone.js
