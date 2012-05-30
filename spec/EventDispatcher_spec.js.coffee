@@ -1,10 +1,10 @@
 describe "EventDispatcher", ->
   beforeEach ->
-    @eventReceiver = new EventReceiver()
-    @routes = new Routes()
-    instanceBuilder = new InstanceBuilder()
-    @presenterManager = new PresenterManager(instanceBuilder)
-    @eventDispatcher = new EventDispatcher(@eventReceiver, @routes, @presenterManager)
+    @eventReceiver = new Wishbone.EventReceiver()
+    @routes = new Wishbone.Routes()
+    instanceBuilder = new Wishbone.InstanceBuilder()
+    @presenterManager = new Wishbone.PresenterManager(instanceBuilder)
+    @eventDispatcher = new Wishbone.EventDispatcher(@eventReceiver, @routes, @presenterManager)
     @eventDispatcher.start()
 
     @startEvent = new Object()
@@ -41,15 +41,14 @@ describe "EventDispatcher", ->
     @eventReceiver.receive(questionEvent)
     expect(@eventDispatcher.onEventHandled.calls.length).toEqual(1)
 
-class @StartPresenter extends BasePresenter
+class @StartPresenter extends Wishbone.Presenter
 
-class @QuestionPresenter extends BasePresenter
+class @QuestionPresenter extends Wishbone.Presenter
 
-
-class @StartView extends BaseView
+class @StartView extends Wishbone.View
   show: ->
     @presenter.done()
 
-class @QuestionView extends BaseView
+class @QuestionView extends Wishbone.View
   show: ->
     @presenter.done()

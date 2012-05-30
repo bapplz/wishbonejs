@@ -23,3 +23,6 @@ tmp
 *.swp
 
 .rvmrc
+
+build/spec
+build/src

@@ -1,6 +1,7 @@
 describe "EventReceiver", ->
   beforeEach ->
-    @eventReceiver = new EventReceiver()
+
+    @eventReceiver = new Wishbone.EventReceiver()
     @startEvent = new Object()
     @startEvent.type = "start"
 

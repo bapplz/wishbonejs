@@ -1,16 +1,16 @@
-guard 'coffeescript', :output => 'src/javascripts' do
-  watch(/^src\/coffeescripts\/(.*)\.coffee/)
+guard 'coffeescript', :output => 'build/src' do
+  watch(/^src\/(.*)\.coffee/)
 end
 
-guard 'coffeescript', :output => 'spec/javascripts' do
-  watch(/^spec\/coffeescripts\/(.*)\.coffee/)
+guard 'coffeescript', :output => 'build/spec' do
+  watch(/^spec\/(.*)\.coffee/)
 end
 
 guard 'livereload' do
-  watch(/^spec\/javascripts\/.+\.js$/)
-  watch(/^src\/javascripts\/.+\.js$/)
+  watch(/^build\/spec\/.+\.js$/)
+  watch(/^build\/src\/.+\.js$/)
 end
 
-guard 'sprockets', :destination => "build", :minify => true, :asset_paths => ['src/javascripts'] do
-  watch (/^src\/javascripts\/.+\.js$/){ |m| "build/wishbone.js" }
+guard 'sprockets', :destination => "build", :asset_paths => ['build/src'] do
+  watch (/^build\/src\/.+\.js$/){ |m| "build/wishbone.js" }
 end
