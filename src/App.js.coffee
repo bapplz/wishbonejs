@@ -9,11 +9,11 @@ module "Wishbone", (exports) ->
   class exports.App
 
     constructor: (rootPresenter) ->
-      @eventReceiver = new EventReceiver()
-      @routes = new Routes()
-      instanceBuilder = new InstanceBuilder()
-      @presenterManager = new PresenterManager(instanceBuilder)
-      @eventDispatcher = new EventDispatcher(@eventReceiver, @routes, @presenterManager)
+      @eventReceiver = new Wishbone.EventReceiver()
+      @routes = new Wishbone.Routes()
+      instanceBuilder = new Wishbone.InstanceBuilder()
+      @presenterManager = new Wishbone.PresenterManager(instanceBuilder)
+      @eventDispatcher = new Wishbone.EventDispatcher(@eventReceiver, @routes, @presenterManager)
       @routes.add("root", rootPresenter)
 
     addRoute: (name, presenter) ->
@@ -22,7 +22,7 @@ module "Wishbone", (exports) ->
     start: ->
       @eventDispatcher.start()
       presenter = @presenterManager.create(@routes.getHandler("root").name)
-      presenter.on "eventHandled", @eventDispatcher.onEventHandled.bind @eventDispatcher
+      presenter.on "eventHandled", (eventType) => @eventDispatcher.onEventHandled(eventType)
       view = @presenterManager.createView(presenter)
       view.show()
 

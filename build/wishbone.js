@@ -20,11 +20,11 @@
 
       function App(rootPresenter) {
         var instanceBuilder;
-        this.eventReceiver = new EventReceiver();
-        this.routes = new Routes();
-        instanceBuilder = new InstanceBuilder();
-        this.presenterManager = new PresenterManager(instanceBuilder);
-        this.eventDispatcher = new EventDispatcher(this.eventReceiver, this.routes, this.presenterManager);
+        this.eventReceiver = new Wishbone.EventReceiver();
+        this.routes = new Wishbone.Routes();
+        instanceBuilder = new Wishbone.InstanceBuilder();
+        this.presenterManager = new Wishbone.PresenterManager(instanceBuilder);
+        this.eventDispatcher = new Wishbone.EventDispatcher(this.eventReceiver, this.routes, this.presenterManager);
         this.routes.add("root", rootPresenter);
       }
 
@@ -33,10 +33,13 @@
       };
 
       App.prototype.start = function() {
-        var presenter, view;
+        var presenter, view,
+          _this = this;
         this.eventDispatcher.start();
         presenter = this.presenterManager.create(this.routes.getHandler("root").name);
-        presenter.on("eventHandled", this.eventDispatcher.onEventHandled.bind(this.eventDispatcher));
+        presenter.on("eventHandled", function(eventType) {
+          return _this.eventDispatcher.onEventHandled(eventType);
+        });
         view = this.presenterManager.createView(presenter);
         return view.show();
       };
@@ -94,7 +97,10 @@
       }
 
       EventDispatcher.prototype.start = function() {
-        return this.eventReceiver.on("afterEventReceived", this.onDispatchEvent.bind(this));
+        var _this = this;
+        return this.eventReceiver.on("afterEventReceived", function(event) {
+          return _this.onDispatchEvent(event);
+        });
       };
 
       EventDispatcher.prototype.onDispatchEvent = function(event) {
@@ -104,7 +110,7 @@
       };
 
       EventDispatcher.prototype.fireNextEvent = function() {
-        var event, handler, presenter, presenterName, view;
+        var event, handler;
         event = this.eventReceiver.poll();
         if (event === null) {
           return;
@@ -114,13 +120,25 @@
           this.fireNextEvent();
           return;
         }
-        presenterName = handler.name;
         this.readyToDispatch = false;
-        presenter = this.presenterManager.create(presenterName);
-        presenter.on("eventHandled", this.onEventHandled.bind(this));
-        presenter.presentWith(event);
+        return this.showViewWith(this.presenterOf(handler.name, event));
+      };
+
+      EventDispatcher.prototype.showViewWith = function(presenter) {
+        var view;
         view = this.presenterManager.createView(presenter);
         return view.show();
+      };
+
+      EventDispatcher.prototype.presenterOf = function(name, event) {
+        var presenter,
+          _this = this;
+        presenter = this.presenterManager.create(name);
+        presenter.on("eventHandled", function(eventType) {
+          return _this.onEventHandled(eventType);
+        });
+        presenter.presentWith(event);
+        return presenter;
       };
 
       EventDispatcher.prototype.onEventHandled = function(eventType) {

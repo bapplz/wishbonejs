@@ -5,7 +5,7 @@ module "Wishbone", (exports) ->
       @readyToDispatch = true
 
     start: ->
-      @eventReceiver.on "afterEventReceived", @onDispatchEvent.bind this
+      @eventReceiver.on "afterEventReceived", (event) => @onDispatchEvent(event)
 
     onDispatchEvent: (event) ->
       if @readyToDispatch == true
@@ -20,15 +20,15 @@ module "Wishbone", (exports) ->
         @fireNextEvent()
         return
       @readyToDispatch = false
-      @showViewWith @presenterOf handler.name
+      @showViewWith @presenterOf handler.name, event
 
     showViewWith: (presenter) ->
       view = @presenterManager.createView(presenter)
       view.show()
 
-    presenterOf: (name) ->
+    presenterOf: (name, event) ->
       presenter = @presenterManager.create(name)
-      presenter.on "eventHandled", @onEventHandled.bind this
+      presenter.on "eventHandled", (eventType) => @onEventHandled(eventType)
       presenter.presentWith(event)
       presenter
 
